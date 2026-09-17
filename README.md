@@ -1,12 +1,11 @@
-# ADM Condomínios — layout referência
+# ADM Condomínios — Premium
 
-Layout recriado com base na referência enviada, responsivo e pronto para Cloudflare Workers + D1.
+Versão premium responsiva para Cloudflare Workers + D1.
 
-## Antes do deploy
-1. No `wrangler.jsonc`, mantenha o **database_id real** do seu D1 `adm-condominios-db`. Não deixe o placeholder.
-2. Rode `npm run db:remote` uma vez para criar a tabela de leads.
-3. Em `public/app.js`, troque `5592999999999` pelo WhatsApp real.
-4. Faça commit no GitHub. Comando de deploy: `npx wrangler deploy`.
+## IMPORTANTE antes de publicar
+- Preserve no `wrangler.jsonc` o `database_id` REAL do banco `adm-condominios-db` que já funcionou no seu deploy anterior. Substitua `COLE_AQUI_O_DATABASE_ID_REAL` pelo seu ID.
+- Em `public/app.js`, substitua `5592999999999` pelo WhatsApp oficial (55 + DDD + número, somente dígitos).
+- Se a tabela ainda não existir: `npm run db:remote`.
+- Deploy: `npx wrangler deploy`.
 
-## Importante
-A imagem arquitetônica do topo foi recortada da referência fornecida por você para aproximar visualmente o site do mockup. Se você tiver a imagem original dos prédios em alta resolução, basta substituir `public/assets/condominios-hero.jpg` mantendo o mesmo nome.
+A imagem premium aprovada está em `public/assets/hero-adm-premium.jpg` e a logo sem fundo em `public/assets/logo-adm-transparent.png`.
