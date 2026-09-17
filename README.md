@@ -1,27 +1,12 @@
-# ADM Condomínios — Cloudflare
+# ADM Condomínios — layout referência
 
-Site responsivo + Worker + D1.
+Layout recriado com base na referência enviada, responsivo e pronto para Cloudflare Workers + D1.
 
-## Configuração
-1. `npm install`
-2. `npx wrangler login`
-3. `npx wrangler d1 create adm-condominios-db`
-4. Copie o `database_id` retornado para `wrangler.jsonc`, substituindo `COLE_AQUI_O_DATABASE_ID`.
-5. Execute `npm run db:remote` para criar a tabela de contatos.
-6. Em `public/app.js`, altere o WhatsApp e o e-mail no objeto `CONTACT`.
-7. Teste com `npm run dev`.
-8. Publique com `npm run deploy`.
+## Antes do deploy
+1. No `wrangler.jsonc`, mantenha o **database_id real** do seu D1 `adm-condominios-db`. Não deixe o placeholder.
+2. Rode `npm run db:remote` uma vez para criar a tabela de leads.
+3. Em `public/app.js`, troque `5592999999999` pelo WhatsApp real.
+4. Faça commit no GitHub. Comando de deploy: `npx wrangler deploy`.
 
-## GitHub
-Envie a pasta inteira para o repositório. O projeto já inclui `.gitignore`, `package.json`, configuração do Wrangler, Worker, D1 e assets estáticos.
-
-## Funcionalidades
-- Layout preto/prata baseado na logomarca ADM
-- Responsivo em desktop, tablet e celular
-- Menu mobile
-- Navegação suave
-- Animações discretas
-- CTA de proposta
-- WhatsApp e e-mail configuráveis
-- Formulário funcional gravando leads no Cloudflare D1
-- Validação no frontend e no Worker
+## Importante
+A imagem arquitetônica do topo foi recortada da referência fornecida por você para aproximar visualmente o site do mockup. Se você tiver a imagem original dos prédios em alta resolução, basta substituir `public/assets/condominios-hero.jpg` mantendo o mesmo nome.
