@@ -9,3 +9,8 @@ Versão premium responsiva para Cloudflare Workers + D1.
 - Deploy: `npx wrangler deploy`.
 
 A imagem premium aprovada está em `public/assets/hero-adm-premium.jpg` e a logo sem fundo em `public/assets/logo-adm-transparent.png`.
+
+## Atualização visual de alto padrão
+- Hero atualizado com a imagem aprovada `public/assets/hero-adm-luxury.png`.
+- Enquadramento ajustado para destacar o condomínio e evitar o efeito de imagem duplicada.
+- O `database_id` real já existente no projeto foi preservado.
