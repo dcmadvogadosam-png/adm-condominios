@@ -38,3 +38,10 @@ npm run db:remote
 ```
 
 Em banco já existente, o Worker detecta e adiciona a coluna `status` automaticamente.
+
+## Painel administrativo
+- `/admin.html` (ou `/admin`) é somente a tela de login.
+- Após autenticar, o administrador é direcionado para `/painel.html`.
+- O painel possui Solicitações e Pagamentos, além de Sair/Logout.
+- Pagamentos: Entrada OK + 3 parcelas de R$ 300,00. O comprovante (PDF/PNG/JPG/JPEG, até 1 MB) é armazenado no D1; a parcela só pode ser marcada como paga após o upload.
+- O Worker cria automaticamente a tabela `admin_payments` caso ela ainda não exista.

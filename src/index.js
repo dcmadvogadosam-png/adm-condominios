@@ -4,6 +4,9 @@ export default {
   async fetch(req, env) {
     const u = new URL(req.url);
 
+    if (u.pathname === "/admin") return Response.redirect(new URL("/admin.html", u), 302);
+    if (u.pathname === "/painel") return Response.redirect(new URL("/painel.html", u), 302);
+
     if (u.pathname === "/api/leads" && req.method === "POST") return createLead(req, env);
     if (u.pathname === "/api/admin/login" && req.method === "POST") return adminLogin(req, env);
     if (u.pathname === "/api/admin/logout" && req.method === "POST") return adminLogout();
@@ -15,6 +18,12 @@ export default {
       await ensureLeadStatus(env);
 
       if (u.pathname === "/api/admin/leads" && req.method === "GET") return listLeads(env);
+      if (u.pathname === "/api/admin/payments" && req.method === "GET") return listPayments(env);
+      const pm = u.pathname.match(/^\/api\/admin\/payments\/(\d+)$/);
+      if (pm && req.method === "PATCH") return updatePayment(req, env, Number(pm[1]));
+      const pf = u.pathname.match(/^\/api\/admin\/payments\/(\d+)\/proof$/);
+      if (pf && req.method === "POST") return uploadPaymentProof(req, env, Number(pf[1]));
+      if (pf && req.method === "GET") return getPaymentProof(env, Number(pf[1]));
       const m = u.pathname.match(/^\/api\/admin\/leads\/(\d+)$/);
       if (m && req.method === "PATCH") return updateLead(req, env, Number(m[1]));
       if (m && req.method === "DELETE") return deleteLead(env, Number(m[1]));
@@ -97,6 +106,79 @@ async function ensureLeadStatus(env) {
   if (!(info.results || []).some(c => c.name === "status")) {
     await env.DB.prepare("ALTER TABLE leads ADD COLUMN status TEXT NOT NULL DEFAULT 'new'").run();
   }
+}
+
+async function ensurePayments(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_payments(
+    installment INTEGER PRIMARY KEY,
+    amount_cents INTEGER NOT NULL DEFAULT 30000,
+    paid INTEGER NOT NULL DEFAULT 0,
+    proof_name TEXT,
+    proof_type TEXT,
+    proof_base64 TEXT,
+    proof_uploaded_at TEXT,
+    paid_at TEXT,
+    updated_at TEXT NOT NULL DEFAULT(datetime('now'))
+  )`).run();
+  for (const n of [1,2,3]) {
+    await env.DB.prepare("INSERT OR IGNORE INTO admin_payments(installment,amount_cents,paid,updated_at) VALUES(?,30000,0,datetime('now'))").bind(n).run();
+  }
+}
+
+async function listPayments(env) {
+  await ensurePayments(env);
+  const { results } = await env.DB.prepare("SELECT installment,amount_cents,paid,proof_name,proof_type,proof_uploaded_at,paid_at,updated_at FROM admin_payments ORDER BY installment").all();
+  return J({ payments: results || [] });
+}
+
+async function updatePayment(req, env, installment) {
+  if (![1,2,3].includes(installment)) return J({ error: "Parcela inválida." }, 400);
+  await ensurePayments(env);
+  const b = await req.json();
+  const paid = !!b.paid;
+  if (paid) {
+    const row = await env.DB.prepare("SELECT proof_name FROM admin_payments WHERE installment=?").bind(installment).first();
+    if (!row?.proof_name) return J({ error: "Envie o comprovante antes de marcar a parcela como paga." }, 400);
+  }
+  await env.DB.prepare("UPDATE admin_payments SET paid=?,paid_at=CASE WHEN ?=1 THEN datetime('now') ELSE NULL END,updated_at=datetime('now') WHERE installment=?").bind(paid?1:0,paid?1:0,installment).run();
+  return J({ ok: true });
+}
+
+async function uploadPaymentProof(req, env, installment) {
+  if (![1,2,3].includes(installment)) return J({ error: "Parcela inválida." }, 400);
+  await ensurePayments(env);
+  const form = await req.formData();
+  const file = form.get("proof");
+  if (!(file instanceof File)) return J({ error: "Selecione um comprovante." }, 400);
+  const allowed = new Set(["application/pdf","image/png","image/jpeg"]);
+  if (!allowed.has(file.type)) return J({ error: "Formato inválido. Use PDF, PNG, JPG ou JPEG." }, 400);
+  if (file.size > 1024 * 1024) return J({ error: "O comprovante deve ter no máximo 1 MB." }, 413);
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const base64 = bytesToBase64(bytes);
+  await env.DB.prepare("UPDATE admin_payments SET proof_name=?,proof_type=?,proof_base64=?,proof_uploaded_at=datetime('now'),paid=0,paid_at=NULL,updated_at=datetime('now') WHERE installment=?").bind(file.name,file.type,base64,installment).run();
+  return J({ ok: true });
+}
+
+async function getPaymentProof(env, installment) {
+  if (![1,2,3].includes(installment)) return new Response("Arquivo não encontrado", { status: 404 });
+  await ensurePayments(env);
+  const row = await env.DB.prepare("SELECT proof_name,proof_type,proof_base64 FROM admin_payments WHERE installment=?").bind(installment).first();
+  if (!row?.proof_base64) return new Response("Comprovante não encontrado", { status: 404 });
+  const bytes = base64ToBytes(row.proof_base64);
+  const safeName = String(row.proof_name || `comprovante-parcela-${installment}`).replace(/[\r\n"]/g, "_");
+  return new Response(bytes, { headers: { "content-type": row.proof_type || "application/octet-stream", "content-disposition": `inline; filename="${safeName}"`, "cache-control": "private, no-store" } });
+}
+
+function bytesToBase64(bytes) {
+  let out = "";
+  const chunk = 0x8000;
+  for (let i=0;i<bytes.length;i+=chunk) out += String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(out);
+}
+function base64ToBytes(base64) {
+  const bin = atob(base64), out = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+  return out;
 }
 
 async function sign(text, secret) {
