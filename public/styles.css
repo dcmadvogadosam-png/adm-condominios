@@ -1039,3 +1039,8 @@ footer {
         transition: none;
     }
 }
+
+/* Acesso administrativo */
+.adminAccess{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;color:#d9dcde;font-size:11px;font-weight:700;letter-spacing:.3px;transition:.25s}.adminAccess:hover{color:#fff;border-color:rgba(240,211,146,.65);background:rgba(255,255,255,.05)}
+@media(max-width:900px){.adminAccess{margin-left:auto}.menuBtn{margin-left:0}}
+@media(max-width:600px){.adminAccess{font-size:0;padding:9px 11px}.adminAccess::after{content:'Admin';font-size:10px}}

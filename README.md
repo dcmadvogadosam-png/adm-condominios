@@ -1,16 +1,40 @@
-# ADM Condomínios — Premium
+# ADM Condomínios
 
-Versão premium responsiva para Cloudflare Workers + D1.
+Site institucional + formulário de leads + painel administrativo protegido.
 
-## IMPORTANTE antes de publicar
-- Preserve no `wrangler.jsonc` o `database_id` REAL do banco `adm-condominios-db` que já funcionou no seu deploy anterior. Substitua `COLE_AQUI_O_DATABASE_ID_REAL` pelo seu ID.
-- Em `public/app.js`, substitua `5592999999999` pelo WhatsApp oficial (55 + DDD + número, somente dígitos).
-- Se a tabela ainda não existir: `npm run db:remote`.
-- Deploy: `npx wrangler deploy`.
+## Deploy
 
-A imagem premium aprovada está em `public/assets/hero-adm-premium.jpg` e a logo sem fundo em `public/assets/logo-adm-transparent.png`.
+```bash
+npm install
+npx wrangler deploy
+```
 
-## Atualização visual de alto padrão
-- Hero atualizado com a imagem aprovada `public/assets/hero-adm-luxury.png`.
-- Enquadramento ajustado para destacar o condomínio e evitar o efeito de imagem duplicada.
-- O `database_id` real já existente no projeto foi preservado.
+O projeto mantém o binding D1 `DB` configurado no `wrangler.jsonc`. A coluna `status` dos leads é criada automaticamente pelo Worker caso o banco já exista na versão anterior.
+
+## Configurar o acesso administrativo
+
+Antes de usar `/admin.html`, cadastre três secrets no Worker. Escolha seu próprio usuário, senha forte e uma chave secreta longa/aleatória:
+
+```bash
+npx wrangler secret put ADMIN_USERNAME
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put ADMIN_SESSION_SECRET
+```
+
+O Wrangler solicitará o valor de cada secret no terminal. Não coloque a senha diretamente no GitHub.
+
+Depois acesse:
+
+`/admin.html`
+
+O painel permite visualizar, pesquisar, filtrar, abrir, responder pelo WhatsApp, alterar o status (Novo / Em atendimento / Finalizado) e excluir solicitações.
+
+## Banco D1
+
+Para uma instalação nova:
+
+```bash
+npm run db:remote
+```
+
+Em banco já existente, o Worker detecta e adiciona a coluna `status` automaticamente.
