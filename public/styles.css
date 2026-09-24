@@ -99,6 +99,37 @@ a {
     opacity: 1;
 }
 
+.instagramLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    white-space: nowrap;
+    transition: color .25s, transform .25s;
+}
+
+.instagramLink svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+}
+
+.instagramLink .instagramDot {
+    fill: currentColor;
+    stroke: none;
+}
+
+.instagramLink:hover {
+    color: var(--gold2);
+    transform: translateY(-1px);
+}
+
 /* =====================================================
    BOTÕES
 ===================================================== */
@@ -794,6 +825,10 @@ footer {
         display: none;
     }
 
+    .instagramLink {
+        margin-left: auto;
+    }
+
     .menuBtn {
         display: block;
 
@@ -904,6 +939,15 @@ footer {
 ===================================================== */
 
 @media (max-width: 600px) {
+
+    .instagramLink span {
+        display: none;
+    }
+
+    .instagramLink svg {
+        width: 24px;
+        height: 24px;
+    }
 
     .container {
         width:
