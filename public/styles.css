@@ -26,6 +26,12 @@ body {
     font-family: Inter, Arial, sans-serif;
     color: #16191b;
     background: var(--paper);
+    overflow-x: hidden;
+}
+
+img,
+svg {
+    max-width: 100%;
 }
 
 a {
@@ -128,6 +134,29 @@ a {
 .instagramLink:hover {
     color: var(--gold2);
     transform: translateY(-1px);
+}
+
+.installPwa {
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    z-index: 80;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 17px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 999px;
+    color: #17130c;
+    background: linear-gradient(135deg, var(--gold2), #bd8d3f);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .3);
+    font: 700 12px Inter, Arial, sans-serif;
+    cursor: pointer;
+}
+
+.installPwa[hidden] {
+    display: none;
 }
 
 /* =====================================================
@@ -826,7 +855,7 @@ footer {
     }
 
     .instagramLink {
-        margin-left: auto;
+        margin-left: 0;
     }
 
     .menuBtn {
@@ -940,6 +969,10 @@ footer {
 
 @media (max-width: 600px) {
 
+    .container {
+        width: min(100% - 28px, 1200px);
+    }
+
     .instagramLink span {
         display: none;
     }
@@ -947,6 +980,14 @@ footer {
     .instagramLink svg {
         width: 24px;
         height: 24px;
+    }
+
+    .installPwa {
+        right: max(12px, env(safe-area-inset-right));
+        bottom: max(12px, env(safe-area-inset-bottom));
+        min-height: 44px;
+        padding: 0 14px;
+        font-size: 11px;
     }
 
     .container {
@@ -1087,4 +1128,6 @@ footer {
 /* Acesso administrativo */
 .adminAccess{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;color:#d9dcde;font-size:11px;font-weight:700;letter-spacing:.3px;transition:.25s}.adminAccess:hover{color:#fff;border-color:rgba(240,211,146,.65);background:rgba(255,255,255,.05)}
 @media(max-width:900px){.adminAccess{margin-left:auto}.menuBtn{margin-left:0}}
-@media(max-width:600px){.adminAccess{font-size:0;padding:9px 11px}.adminAccess::after{content:'Admin';font-size:10px}}
+@media(max-width:600px){.nav{gap:10px}.brand{gap:7px}.brand b{font-size:20px}.brand small{letter-spacing:2px}.adminAccess{font-size:0;padding:9px 10px}.adminAccess::after{content:'Admin';font-size:10px}.menuBtn{padding:4px}}
+
+@media(max-width:360px){.brand span{display:none}.hero h1{font-size:39px}}
